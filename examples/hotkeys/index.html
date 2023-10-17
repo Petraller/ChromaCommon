@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chroma Example</title>
+    <script src="../../ChromaSDKImpl.js"></script>
+    <script>
+        window.onload = () => {
+            // Initialise global Chroma SDK object
+            chromaSDK.init();
+
+            // Wait for Chroma SDK to initialize
+            new Promise((resolve) => {
+                const poll = () => {
+                    if (chromaSDK.initialized)
+                        resolve();
+                    else
+                        setTimeout(poll, 100);
+                };
+                setTimeout(poll, 100);
+            }).then(() => {
+                // Load animations for each device
+                for (let device of [
+                    { suffix: "ChromaLink", id: EChromaSDKDeviceEnum.DE_ChromaLink },
+                    { suffix: "Headset", id: EChromaSDKDeviceEnum.DE_Headset },
+                    { suffix: "Keyboard", id: EChromaSDKDeviceEnum.DE_Keyboard },
+                    { suffix: "Keypad", id: EChromaSDKDeviceEnum.DE_Keypad },
+                    { suffix: "Mouse", id: EChromaSDKDeviceEnum.DE_Mouse },
+                    { suffix: "Mousepad", id: EChromaSDKDeviceEnum.DE_Mousepad },
+                ]) {
+                    const name = `../animations/RainbowWipe_${device.suffix}.chroma`;
+
+                    ChromaAnimation.closeAnimation(name); // close animation if already open
+                    ChromaAnimation.openAnimation(name, (anim) => {
+                        if (!anim)
+                            return;
+
+                        // Set custom color flag
+                        ChromaAnimation.setChromaCustomColorAllFrames(anim.Name);
+
+                        // Get red color 0x0000FF
+                        const red = ChromaAnimation.getRGB(255, 0, 0);
+
+                        // Set key color for every frame
+                        ChromaAnimation.setKeysColorAllFrames(anim.Name, [RZKEY.RZKEY_W, RZKEY.RZKEY_A, RZKEY.RZKEY_S, RZKEY.RZKEY_D], red);
+
+                        // Play animation
+                        ChromaAnimation.playAnimation(anim.Name, true, () => { });
+                    }, false);
+                }
+            });
+        }
+
+        window.onbeforeunload = () => {
+            // Uninitialise global Chroma SDK object
+            chromaSDK.uninit();
+        }
+    </script>
+</head>
+
+<body>
+    Hotkeys Example
+</body>
+
+</html>
