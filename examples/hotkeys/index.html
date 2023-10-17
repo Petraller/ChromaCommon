@@ -6,6 +6,9 @@
     <title>Chroma Example</title>
     <script src="../../ChromaSDKImpl.js"></script>
     <script>
+        // Fallback in case global object is not exposed
+        var chromaSDK = new ChromaSDK();
+
         window.onload = () => {
             // Initialise global Chroma SDK object
             chromaSDK.init();
